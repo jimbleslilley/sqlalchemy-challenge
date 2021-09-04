@@ -118,8 +118,40 @@ def tobs():
     session.close()
 
     list_tobs = list(np.ravel(last_year,order="k"))
-
+    print("tobs api successful")
     return jsonify(list_tobs)
+
+#################################################
+# /api/v1.0/<start>
+#################################################
+
+# Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
+# When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
+#/api/v1.0/2010-06-20
+
+@app.route("/api/v1.0/<startDate>")
+def temp_date_end(startDate):
+
+    if isinstance(startDate,str):
+        print("true")
+        session = Session(engine)
+
+        date_stats  = (session.query(func.min(Measurement.tobs),
+                                func.avg(Measurement.tobs),
+                                func.max(Measurement.tobs))
+                                .filter(Measurement.date >= startDate)
+                                .first())
+        
+        session.close()
+
+        # Convert list of tuples into normal list
+        list_date_stats = list(np.ravel(date_stats))
+
+        return jsonify(list_date_stats)
+
+
+
+
 
 
 
