@@ -36,12 +36,68 @@ def home():
     """List all available api routes."""
     return (
         f"Available Routes:<br/>"
+        f"<br/>"
         f"/api/v1.0/precipitation<br/>"
-        f"/api/v1.0/stations"
-        f"/api/v1.0/tobs"
-        f"/api/v1.0/<start date>"
-        f"/api/v1.0/<start date>/<end date>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/start date<br/>"
+        f"/api/v1.0/start date/end date<br/>"
+        f"Dates to be typed yyyy-mm-dd"
     )
+
+#################################################
+# /api/v1.0/precipitation
+#################################################
+
+# Convert the query results to a dictionary using date as the key and prcp as the value.
+# Return the JSON representation of your dictionary.
+
+@app.route("/api/v1.0/precipitation")
+def precipitation():
+
+    session = Session(engine)
+
+    #Query to get dates and precipitation
+    data = session.query(Measurement.date,Measurement.prcp).all()
+
+    session.close()
+    
+    #create json ready dictionary for dates and precipitation
+    list_date_precip = []
+    for date, precip in data:
+        dict_dates = {}
+        dict_dates[date] = precip
+        list_date_precip.append(dict_dates)
+
+    return jsonify(list_date_precip)
+
+#################################################
+# /api/v1.0/stations
+#################################################
+
+# Return a JSON list of stations from the dataset.
+
+@app.route("/api/v1.0/stations")
+def stations():
+
+    session = Session(engine)
+
+    #Get all station names,
+    data = session.query(Station.station).all()
+
+    session.close()
+
+
+    # Convert list of tuples into normal list
+    list_station = list(np.ravel(data,order="k"))
+
+    return jsonify(list_station)
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
