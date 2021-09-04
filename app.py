@@ -1,5 +1,5 @@
 import numpy as np
-import os
+import datetime as dt
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -93,9 +93,25 @@ def stations():
 
     return jsonify(list_station)
 
+#################################################
+# /api/v1.0/tobs
+#################################################
 
+# Query the dates and temperature observations of the most active station for the last year of data.
+# Return a JSON list of temperature observations (TOBS) for the previous year.
 
+@app.route("/api/v1.0/tobs")
+def tobs():
 
+    session = Session(engine)
+
+    # Return most recent date minus one year 
+    latest_date = (session.query(func.max(Measurement.date)).scalar())
+    date_last_year = dt.datetime.strptime(latest_date, "%Y-%m-%d") - dt.timedelta(days=365)
+    
+    session.close()
+
+    
 
 
 
