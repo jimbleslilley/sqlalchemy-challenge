@@ -109,9 +109,17 @@ def tobs():
     latest_date = (session.query(func.max(Measurement.date)).scalar())
     date_last_year = dt.datetime.strptime(latest_date, "%Y-%m-%d") - dt.timedelta(days=365)
     
+    last_year = (session
+                .query(Measurement.date, Measurement.tobs)
+                .order_by(Measurement.date)
+                .filter(Measurement.date >= date_last_year).all()
+    )
+
     session.close()
 
-    
+    list_tobs = list(np.ravel(last_year),order="k")
+
+    return jsonify(list_tobs)
 
 
 
