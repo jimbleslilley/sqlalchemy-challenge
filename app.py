@@ -117,7 +117,7 @@ def tobs():
 
     session.close()
 
-    list_tobs = list(np.ravel(last_year),order="k")
+    list_tobs = list(np.ravel(last_year,order="k"))
 
     return jsonify(list_tobs)
 
